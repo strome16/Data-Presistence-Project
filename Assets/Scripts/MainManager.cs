@@ -2,7 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
+using UnityEngine.UI;      // <-- NEW for Button
+using TMPro;
 
 public class MainManager : MonoBehaviour
 {
@@ -10,22 +11,23 @@ public class MainManager : MonoBehaviour
     public int LineCount = 6;
     public Rigidbody Ball;
 
-    public Text ScoreText;
+    public TextMeshProUGUI ScoreText;
     public GameObject GameOverText;
-    
+    public TextMeshProUGUI BestScoreText;
+
+    public Button returnToMenuButton;   // <-- NEW
+    public string menuSceneName = "Menu"; // <-- NEW (set this to your menu scene name)
+
     private bool m_Started = false;
     private int m_Points;
-    
     private bool m_GameOver = false;
 
-    
-    // Start is called before the first frame update
     void Start()
     {
         const float step = 0.6f;
         int perLine = Mathf.FloorToInt(4.0f / step);
-        
-        int[] pointCountArray = new [] {1,1,2,2,5,5};
+
+        int[] pointCountArray = new[] { 1, 1, 2, 2, 5, 5 };
         for (int i = 0; i < LineCount; ++i)
         {
             for (int x = 0; x < perLine; ++x)
@@ -36,6 +38,11 @@ public class MainManager : MonoBehaviour
                 brick.onDestroyed.AddListener(AddPoint);
             }
         }
+
+        if (returnToMenuButton != null)          // <-- NEW
+            returnToMenuButton.gameObject.SetActive(false);  // hide button at start
+
+        UpdateBestScoreUI();
     }
 
     private void Update()
@@ -72,5 +79,36 @@ public class MainManager : MonoBehaviour
     {
         m_GameOver = true;
         GameOverText.SetActive(true);
+
+        if (DataManager.Instance != null && m_Points > DataManager.Instance.BestScore)
+        {
+            DataManager.Instance.BestScore = m_Points;
+            DataManager.Instance.BestPlayerName = DataManager.Instance.PlayerName;
+            DataManager.Instance.SaveHighScore();
+        }
+
+        UpdateBestScoreUI();
+
+        if (returnToMenuButton != null)          // <-- NEW
+            returnToMenuButton.gameObject.SetActive(true);   // show Menu button on game over
+    }
+
+    void UpdateBestScoreUI()
+    {
+        if (DataManager.Instance != null && DataManager.Instance.BestScore > 0)
+        {
+            BestScoreText.text =
+                $"Best: {DataManager.Instance.BestPlayerName}: {DataManager.Instance.BestScore}";
+        }
+        else
+        {
+            BestScoreText.text = "Best: ---";
+        }
+    }
+
+    // <-- NEW: called by the Menu button
+    public void ReturnToMenu()
+    {
+        SceneManager.LoadScene(menuSceneName);
     }
 }
