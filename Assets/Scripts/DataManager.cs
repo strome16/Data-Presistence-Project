@@ -30,15 +30,6 @@ public class DataManager : MonoBehaviour
         LoadHighScore();
     }
 
-    public void ResetHighScore()
-    {
-        BestScore = 0;
-        BestPlayerName = "";
-
-        // overwrite the save file with the cleared data
-        SaveHighScore();
-    }
-
     public void SaveHighScore()
     {
         SaveData data = new SaveData();
@@ -47,15 +38,19 @@ public class DataManager : MonoBehaviour
 
         string json = JsonUtility.ToJson(data);
         string path = Application.persistentDataPath + "/savefile.json";
+        Debug.Log($"[DataManager] Saving HS '{BestPlayerName}' : {BestScore} to {path}");
         File.WriteAllText(path, json);
     }
 
     public void LoadHighScore()
     {
         string path = Application.persistentDataPath + "/savefile.json";
+        Debug.Log($"[DataManager] Loading HS from {path}");
+
         if (File.Exists(path))
         {
             string json = File.ReadAllText(path);
+            Debug.Log($"[DataManager] Loaded json: {json}");
             SaveData data = JsonUtility.FromJson<SaveData>(json);
 
             BestPlayerName = data.bestPlayerName;
@@ -63,8 +58,17 @@ public class DataManager : MonoBehaviour
         }
         else
         {
+            Debug.Log("[DataManager] No save file, using defaults");
             BestPlayerName = "";
             BestScore = 0;
         }
+    }
+
+    public void ResetHighScore()
+    {
+        Debug.Log("[DataManager] ResetHighScore called");
+        BestPlayerName = "";
+        BestScore = 0;
+        SaveHighScore();
     }
 }

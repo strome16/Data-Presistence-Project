@@ -899,9 +899,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 432847868}
-        m_TargetAssemblyTypeName: DataManager, Assembly-CSharp
-        m_MethodName: ResetHighScore
+      - m_Target: {fileID: 1848897807}
+        m_TargetAssemblyTypeName: MenuUIHandler, Assembly-CSharp
+        m_MethodName: OnResetHighScoreClicked
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

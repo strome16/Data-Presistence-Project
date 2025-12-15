@@ -4,9 +4,9 @@ using TMPro;
 
 public class MenuUIHandler : MonoBehaviour
 {
-    public TextMeshProUGUI highScoreText;
-    public TMP_InputField nameInputField;
-    public string gameSceneName = "main";
+    public TextMeshProUGUI highScoreText;   // green label
+    public TMP_InputField nameInputField;   // name box
+    public string gameSceneName = "main";   // your game scene name
 
     void Start()
     {
@@ -36,6 +36,7 @@ public class MenuUIHandler : MonoBehaviour
         if (DataManager.Instance != null)
         {
             DataManager.Instance.PlayerName = nameInputField.text;
+            Debug.Log($"[MenuUIHandler] Starting game as '{DataManager.Instance.PlayerName}'");
         }
 
         SceneManager.LoadScene(gameSceneName);
@@ -55,14 +56,19 @@ public class MenuUIHandler : MonoBehaviour
 #endif
     }
 
-    // NEW: hook this to the "Reset High Score" button
     public void OnResetHighScoreClicked()
     {
+        Debug.Log("[MenuUIHandler] Reset button clicked");
+
         if (DataManager.Instance != null)
         {
             DataManager.Instance.ResetHighScore();
         }
+        else
+        {
+            Debug.LogWarning("[MenuUIHandler] DataManager.Instance is null on reset!");
+        }
 
-        RefreshHighScoreText();
+        RefreshHighScoreText();   // <- this is what updates the label
     }
 }
